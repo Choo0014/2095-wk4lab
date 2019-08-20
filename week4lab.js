@@ -47,23 +47,63 @@ app.get('/listAll', function (req, res) {
     res.send(table);
 }); //if an app gets this pathname it will respond with this response
 
+app.get('/deleteItem/:inputItemId', function (req, res) { // /: represents a variable - a parameter
+    //if a request arrives that matches this statement, execute this:
+    let search = false;
+    let msg = "";
+    let trashId = parseInt(req.params.inputItemId);
 
+    console.log(req.params);
 
-function generateList() {
-    let st = "Index" + "| " + "ID" + " | " + "Name" + " | " + "Quantity" + " | " + "Price" + " | " + "Cost" + "</br>" + "</br>";
-    for (let i = 0; i < db.length; i++) {
-        let itemCost = db[i].itemQuantity *db[i].itemPrice;
-        st += (i) + " - " + db[i].itemId + " | " + db[i].itemName + "|" + db[i].itemQuantity + "|" + db[i].itemPrice + "|" + itemCost + "</br>";
+    for (let i = 0; i < db.length && !search; i++) { //iterates between 0 and no found. Once found, found becomes TRUE
+        if (db[i].itemId === trashId) {
+            db = db.splice(i, 1);
+            search = true;
+            msg = "Item: " + trashId + " has been deleted."
+        }
 
     }
-    return st;
+
+
+    if (search === false) {
+        msg = "Error! The item's ID could not be found..."
+    }
+    res.send(msg);
+
+
+});
+
+app.get('/totalValue', (req, res) => {
+    let value = 0;
+    db.forEach(element => {
+        value += parseInt(element.quantity * element.price);
+
+    })
+    res.send('Warehouse total value: ' + value);
+})
+
+
+
+function deleteItem(itemId) {
+    db.splice(itemId, 1);
 }
+
 
 function getNewRandomId() {
     let id;
     id = Math.round(Math.random() * 1000); //gives between 0 and 1, multiply by 1000. rounds to nearest integer
     return id;
 
+}
+
+function generateList() {
+    let st = "Index" + "| " + "ID" + " | " + "Name" + " | " + "Quantity" + " | " + "Price" + " | " + "Cost" + "</br>" + "</br>";
+    for (let i = 0; i < db.length; i++) {
+        let itemCost = db[i].itemQuantity * db[i].itemPrice;
+        st += (i) + " - " + db[i].itemId + " | " + db[i].itemName + "|" + db[i].itemQuantity + "|" + db[i].itemPrice + "|" + itemCost + "</br>";
+
+    }
+    return st;
 }
 
 //app.use('/', router);
