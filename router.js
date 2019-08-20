@@ -15,7 +15,7 @@ router.get('/newItem/:name/:quantity/:price', function (req, res) { //user input
     let newQuantity = parseInt(req.params.quantity);
     let newPrice = parseInt(req.params.price);
 
-    obj = {
+    let obj = {
         itemId: newId,
         itemName: newName,
         itemQuantity: newQuantity,
